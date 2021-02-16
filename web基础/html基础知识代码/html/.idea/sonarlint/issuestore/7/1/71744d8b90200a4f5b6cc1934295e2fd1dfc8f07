@@ -1,7 +1,0 @@
-
-PWeb:AvoidCommentedOutCodeCheck"Remove this commented out code.(³ÕÇ8¦°–Šú.
-UWeb:AvoidCommentedOutCodeCheck"Remove this commented out code.(¬›×ÿÿÿÿÿ8œ›Šú.
-PWeb:AvoidCommentedOutCodeCheck"Remove this commented out code.(«ô8œ›Šú.
-UWeb:AvoidCommentedOutCodeCheck"Remove this commented out code.(†£úºüÿÿÿÿ8œ›Šú.
-K	Web:S1827"/Remove this deprecated "frameborder" attribute.(È¼®Û8µ’’Šú.
-ZWeb:FrameWithoutTitleCheck"-Add a "title" attribute to this <iframe> tag.(È¼®Û8â­Šú.
