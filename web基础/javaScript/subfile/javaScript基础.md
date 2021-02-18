@@ -326,6 +326,45 @@ student.substring(1,3) //[1,3)
 "tu"
 ```
 
+**其它：**
+
+ES5：
+
+```javascript
+let persons = ['张三','李四','王五'];
+function hello(a,b,c){
+    console.info(a);
+    console.info(b);
+    console.info(c);
+}
+
+hello(persons[0],persons[1],persons[2]);
+```
+
+ES6扩展运算符：
+
+```javascript
+let persons = ['张三','李四','王五'];
+function hello(a,b,c){
+    console.info(a);
+    console.info(b);
+    console.info(c);
+}
+
+hello(...persons);
+```
+
+扩展字符串不仅可以在函数传参时使用，还可以在数组中使用：
+
+```JavaScript
+let class1 = ['张三','李四','王五'];
+let class2 = ['田七','王八','赵九'];
+
+let allPerson = [...class1,...class2];
+
+console.log(allPerson);
+```
+
 
 
 ## 数组
@@ -418,4 +457,79 @@ arr[1][1]
 ```
 
 
+
+## 对象
+
+若干个键值对
+
+```javascript
+var 对象名 = {
+    属性名: 属性值,
+    属性名: 属性值,
+    属性名: 属性值,
+}
+
+//定义了一个person对象，它有四个属性！
+        var person = {
+            name: "刘德华",
+            age: 18,
+            email: "12345678@qq.com",
+            score: 0
+        }
+```
+
+JavaScript中的对象，{......}表示一个对象，键值对描述属性 xxxx: xxxx,多个属性之间使用逗号隔开，最后一个属性不加逗号！
+
+JavaScript中的所有的键都是字符串，值是任意对象！
+
+1、对象赋值
+
+```javascript
+person.name = "张三"
+"张三"
+person.name
+"张三"
+```
+
+2、使用一个不存在的对象属性，不会报错！ undefined
+
+```javascript
+person.haha
+undefined
+```
+
+3、动态的删减属性,通过delete删除对象的属性
+
+```javascript
+delete person.name
+true
+person
+```
+
+4、动态的添加，直接给新的属性添加值即可
+
+```javascript
+person.haha = "haha"
+"haha"
+person
+```
+
+5、判断属性值是否在这个对象中！ xxx in xxx!
+
+```javascript
+'age' in person
+true
+//继承
+'toString' in person
+true
+```
+
+6、判断一个属性是否是这个对象自身拥有的  hasOwnProperty()
+
+```javascript
+person.hasOwnProperty('toString')
+false
+person.hasOwnProperty('age')
+true
+```
 
