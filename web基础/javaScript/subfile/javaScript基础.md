@@ -533,3 +533,400 @@ person.hasOwnProperty('age')
 true
 ```
 
+
+
+## 流程控制
+
+if 判断
+
+```javascript
+var age = 3;
+if(age > 3){	//第一个判断
+    alert("haha");
+}else if(age < 5){	//第二个判断
+    alert("kuwa~");
+}else{	//否则
+    alert("kuwa~");
+}
+```
+
+while循环，避免程序死循环
+
+```javascript
+while(age < 100){
+    age = age + 1;
+    console.log(age)
+}
+
+do{
+    age = age + 1;
+    console.log(age)
+}while(age < 100)
+```
+
+for循环
+
+```javascript
+for(let i = 0; i < 100;i++){
+    console.log(i)
+}
+```
+
+**forEach 循环**  
+
+> 5.1引入
+
+```javascript
+var age = [1,25,64,156,165,15,552,99];
+
+age.forEach(function (value){
+    console.log(value)
+})
+```
+
+for...in
+
+```javascript
+//for(var index in object){}
+for(var num in age){
+    if(age.hasOwnProperty(num)){
+        console.log(age[num])
+    }
+}
+```
+
+
+
+## Map 和 Set
+
+`ES6 的新特性~`
+
+Map:
+
+```javascript
+//ES6   Map
+//学生的成绩，名字
+// var names = ["tom","jack","haha"]
+// var scores = [100,90,80];
+
+var map = new Map([['tom',100],['jack',90],['haha',80]]);
+var name = map.get('tom');  //通过key获得value
+map.set('admin',123456);	//新增或修改
+console.log(name);
+map.delete("tom");			//删除
+```
+
+Set:无序不重复的集合
+
+```javascript
+//set 可以去重
+var set = new Set([3,2,1,1,2,3,1,1,1])
+set.add(5)	//添加！
+set.delete(2);	//删除
+console.log(set.has(3)); //是否包含某个元素！
+```
+
+
+
+## Iterator
+
+> es6 新特性
+
+遍历数组
+
+```javascript
+//通过for of实现，
+var arr = [3,4,5]
+for (var x of arr){
+   console.log(x)
+}
+```
+
+遍历map
+
+```javascript
+var map = new Map([['tom',100],['jack',90],['haha',80]]);
+for (let x of map){
+    console.log(x)
+}
+```
+
+遍历set
+
+```javascript
+var set = new Set([3,2,1,1,2,3,1,1,1])
+for (let x of set){
+    console.log(x)
+}
+```
+
+
+
+# 函数及面向对象
+
+## 函数定义及变量作用域
+
+> 定义方式一
+
+绝对值函数
+
+```javascript
+function abs(x){
+    if(x>=0){
+        return x;
+    }else{
+        return -x;
+    }
+}
+```
+
+一旦执行到return 代表函数结束，返回结果！
+
+如果没有执行return，函数执行完也会返回结果，结果就是undefined
+
+
+
+> 定义方式二
+
+```javascript
+var abs = function(x){
+    if(x>=0){
+        return x;
+    }else{
+        return -x;
+    }
+}
+```
+
+function(x){...}这是一个匿名函数，但是可以把结果赋值给abs，通过abs就可以调用函数！
+
+方式一和方式二等价！
+
+
+
+> 调用函数
+
+```javascript
+abs(10)  //10
+abs(-10) //-10
+```
+
+参数问题：JavaScript可以传任意个参数，也可以不传参数~
+
+参数传进来是否存在的问题？	
+
+假设不存在参数，如何规避！
+
+```javascript
+var abs = function(x){
+    //手动抛出异常来判断
+    if (typeof x !== 'number'){
+        throw 'Not a Number';
+    }
+    if(x>=0){
+        return x;
+    }else{
+        return -x;
+    }
+}
+```
+
+
+
+> **arguments**
+
+`arguments`是一个JS免费赠送的关键字；
+
+代表，传递进来的所有的参数，是一个数组！
+
+```javascript
+function abs(x){
+
+    console.log("x=>" + x);
+
+    for (var i = 0; i < arguments.length; i++) {
+        console.log(arguments[i]);
+     }
+
+     if(x>=0){
+         return x;
+     }else{
+         return -x;
+     }
+}
+```
+
+
+
+问题：arguments 包含所有的参数，我们有时候想使用多余的参数来进行附加操作，需要排除已有参数~
+
+> **rest**
+
+以前：
+
+```javascript
+if (arguments.length > 2){
+    for (var i = 2;i < arguments.length;i++){
+        //.......
+    }
+}
+```
+
+ES6 引入的新特性，获取除了已经定义的参数之外的所有参数~....
+
+```javascript
+function aaa(a,b,...rest){
+    console.log("a=>"+a);
+    console.log("b=>"+b);
+    console.log(rest);
+}
+```
+
+rest 参数只能写在最后面，必须用 ... 标识。
+
+
+
+## 方法
+
+
+
+
+
+## 闭包
+
+
+
+
+
+## 箭头函数
+
+
+
+
+
+
+
+## 创建对象
+
+
+
+
+
+
+
+## class继承
+
+
+
+
+
+
+
+## 原型链继承
+
+
+
+
+
+
+
+# 常用对象
+
+## Date
+
+
+
+
+
+
+
+## JSON
+
+
+
+
+
+
+
+# 操作Dom元素
+
+## 插入Dom
+
+
+
+
+
+## 更新Dom
+
+
+
+
+
+
+
+## 删除Dom
+
+
+
+
+
+
+
+# 操作Bom元素
+
+## window
+
+
+
+
+
+## navigator
+
+
+
+
+
+
+
+## screen
+
+
+
+
+
+## location
+
+
+
+
+
+## Document
+
+
+
+
+
+## History
+
+
+
+
+
+## 操作表单
+
+
+
+
+
+## 操作文件
+
+
+
+
+
+
+
+
+
+
+
