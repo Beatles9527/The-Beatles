@@ -361,3 +361,117 @@ public static void main(String[] args) {
 | HALF_DOWN     | 最近数字舍入（5舍），在四舍五入中，5是进位的，而在>HALF_DOWN中却是舍弃不进位。 |
 | HALF_EVEN     | 银行家算法，四舍六入五考虑，五后非零就进一，五后为零看奇偶，五前为偶应舍去，五前为奇要进一。 |
 
+
+
+## 浮点数
+
+本部分主要介绍了浮点数的表示与加减运算，可以直接参考书籍内容：
+
+![image](../images/book-images/4.png)
+
+![image](../images/book-images/5.png)
+
+![image](../images/book-images/6.png)
+
+![image](../images/book-images/7.png)
+
+![image](../images/book-images/8.png)
+
+![image](../images/book-images/9.png)
+
+![image](../images/book-images/10.png)
+
+
+
+## 字符集与乱码
+
+![image](../images/book-images/11.png)
+
+![image](../images/book-images/12.png)
+
+
+
+## CPU与内存
+
+![image](../images/book-images/13.png)
+
+![image](../images/book-images/14.png)
+
+![image](../images/book-images/15.png)
+
+![image](../images/book-images/16.png)
+
+![image](../images/book-images/17.png)
+
+
+
+## TCP/IP
+
+**本笔记主要以Java知识为主，计算机网络相关知识，会另行学习。因此不做过多介绍，以书籍介绍为主。**
+
+### 网络协议
+
+![image](../images/book-images/18.png)
+
+![image](../images/book-images/19.png)
+
+![image](../images/book-images/20.png)
+
+
+
+### IP协议
+
+![image](../images/book-images/21.png)
+
+![image](../images/book-images/22.png)
+
+![image](../images/book-images/23.png)
+
+
+
+### TCP建立连接
+
+![image](../images/book-images/24.png)
+
+![image](../images/book-images/25.png)
+
+![image](../images/book-images/26.png)
+
+![image](../images/book-images/27.png)
+
+![image](../images/book-images/28.png)
+
+![image](../images/book-images/29.png)
+
+![image](../images/book-images/30.png)
+
+
+
+### TCP断开连接
+
+![image](../images/book-images/31.png)
+
+![image](../images/book-images/32.png)
+
+![image](../images/book-images/33.png)
+
+![image](../images/book-images/34.png)
+
+![image](../images/book-images/35.png)
+
+
+
+### 连接池
+
+![image](../images/book-images/36.png)
+
+![image](../images/book-images/37.png)
+
+![image](../images/book-images/38.png)
+
+
+
+## 信息安全
+
+### 黑客与安全
+
