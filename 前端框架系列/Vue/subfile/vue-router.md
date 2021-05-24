@@ -246,6 +246,42 @@ redirect是重定向, 也就是我们将根路径重定向到/home的路径下, 
 
 ## 动态路由
 
+> 我们经常需要把某种模式匹配到的所有路由，全都映射到同个组件。例如，我们有一个 `User` 组件，对于所有 ID 各不相同的用户，都要使用这个组件来渲染。那么，我们可以在 `vue-router` 的路由路径中使用“动态路径参数”(dynamic segment) 来达到这个效果：
+>
+> ```js
+> const User = {
+>   template: '<div>User</div>'
+> }
+> 
+> const router = new VueRouter({
+>   routes: [
+>     // 动态路径参数 以冒号开头
+>     { path: '/user/:id', component: User }
+>   ]
+> })
+> ```
+>
+> 现在呢，像 `/user/foo` 和 `/user/bar` 都将映射到相同的路由。
+>
+> 一个“路径参数”使用冒号 `:` 标记。当匹配到一个路由时，参数值会被设置到 `this.$route.params`，可以在每个组件内使用。于是，我们可以更新 `User` 的模板，输出当前用户的 ID：
+>
+> ```js
+> const User = {
+>   template: '<div>User {{ $route.params.id }}</div>'
+> }
+> ```
+>
+> 你可以在一个路由中设置多段“路径参数”，对应的值都会设置到 `$route.params` 中。例如：
+>
+> | 模式                          | 匹配路径            | $route.params                          |
+> | ----------------------------- | ------------------- | -------------------------------------- |
+> | /user/:username               | /user/evan          | `{ username: 'evan' }`                 |
+> | /user/:username/post/:post_id | /user/evan/post/123 | `{ username: 'evan', post_id: '123' }` |
+>
+> 除了 `$route.params` 外，`$route` 对象还提供了其它有用的信息，例如，`$route.query` (如果 URL 中有查询参数)、`$route.hash` 等等。
+
+---
+
 在某些情况下，一个页面的path路径可能是不确定的，比如我们进入用户界面时，希望是如下的路径：
 /user/aaaa或/user/bbbb
 除了有前面的/user之外，后面还跟上了用户的ID
@@ -260,6 +296,230 @@ redirect是重定向, 也就是我们将根路径重定向到/home的路径下, 
 ![image](../images/44.png)
 
 
+
+## 路由的懒加载
+
+> 当打包构建应用时，JavaScript 包会变得非常大，影响页面加载。如果我们能把不同路由对应的组件分割成不同的代码块，然后当路由被访问的时候才加载对应组件，这样就更加高效了。
+>
+> 结合 Vue 的异步组件 (opens new window)和 Webpack 的代码分割功能 (opens new window)，轻松实现路由组件的懒加载。
+>
+> 首先，可以将异步组件定义为返回一个 Promise 的工厂函数 (该函数返回的 Promise 应该 resolve 组件本身)：
+>
+> ```js
+> const Foo = () =>
+>   Promise.resolve({
+>     /* 组件定义对象 */
+>   })
+> ```
+>
+> 第二，在 Webpack 2 中，我们可以使用动态 import (opens new window)语法来定义代码分块点 (split point)：
+>
+> ```js
+> import('./Foo.vue') // 返回 Promise
+> ```
+>
+> *注意*
+>
+> 如果您使用的是 Babel，你将需要添加 `syntax-dynamic-import` (opens new window)插件，才能使 Babel 可以正确地解析语法。
+>
+> 结合这两者，这就是如何定义一个能够被 Webpack 自动代码分割的异步组件。
+>
+> ```js
+> const Foo = () => import('./Foo.vue')
+> ```
+>
+> 在路由配置中什么都不需要改变，只需要像往常一样使用 `Foo`：
+>
+> ```js
+> const router = new VueRouter({
+>   routes: [{ path: '/foo', component: Foo }]
+> })
+> ```
+>
+> **把组件按组分块**
+>
+> 有时候我们想把某个路由下的所有组件都打包在同个异步块 (chunk) 中。只需要使用 命名 chunk (opens new window)，一个特殊的注释语法来提供 chunk name (需要 Webpack > 2.4)。
+>
+> ```js
+> const Foo = () => import(/* webpackChunkName: "group-foo" */ './Foo.vue')
+> const Bar = () => import(/* webpackChunkName: "group-foo" */ './Bar.vue')
+> const Baz = () => import(/* webpackChunkName: "group-foo" */ './Baz.vue')
+> ```
+>
+> Webpack 会将任何一个异步模块与相同的块名称组合到相同的异步块中。
+
+---
+
+*路由懒加载做了什么?*
+
+路由懒加载的主要作用就是将路由对应的组件打包成一个个的js代码块。
+只有在这个路由被访问到的时候, 才加载对应的组件。
+
+==懒加载前：==
+
+![image](../images/45.png)
+
+![image](../images/46.png)
+
+==懒加载后：==
+
+![image](../images/47.png)
+
+![image](../images/48.png)
+
+
+
+**懒加载的方式：**
+
+- 方式一: 结合Vue的异步组件和Webpack的代码分析.
+
+```js
+const Home = resolve => { require.ensure(['../components/Home.vue'], () => { resolve(require('../components/Home.vue')) })};
+```
+
+- 方式二: AMD写法
+
+```js
+const About = resolve => require(['../components/About.vue'], resolve);
+```
+
+- 方式三: 在ES6中, 我们可以有更加简单的写法来组织Vue异步组件和Webpack的代码分割.
+
+```js
+const Home = () => import('../components/Home.vue')
+```
+
+
+
+## 嵌套路由
+
+> 实际生活中的应用界面，通常由多层嵌套的组件组合而成。同样地，URL 中各段动态路径也按某种结构对应嵌套的各层组件，例如：
+>
+> ```text
+> /user/foo/profile                     /user/foo/posts
+> +------------------+                  +-----------------+
+> | User             |                  | User            |
+> | +--------------+ |                  | +-------------+ |
+> | | Profile      | |  +------------>  | | Posts       | |
+> | |              | |                  | |             | |
+> | +--------------+ |                  | +-------------+ |
+> +------------------+                  +-----------------+
+> ```
+>
+> 借助 `vue-router`，使用嵌套路由配置，就可以很简单地表达这种关系。
+>
+> 接着上节创建的 app：
+>
+> ```html
+> <div id="app">
+>   <router-view></router-view>
+> </div>
+> ```
+>
+> ```js
+> const User = {
+>   template: '<div>User {{ $route.params.id }}</div>'
+> }
+> 
+> const router = new VueRouter({
+>   routes: [{ path: '/user/:id', component: User }]
+> })
+> ```
+>
+> 这里的 `<router-view>` 是最顶层的出口，渲染最高级路由匹配到的组件。同样地，一个被渲染组件同样可以包含自己的嵌套 `<router-view>`。例如，在 `User` 组件的模板添加一个 `<router-view>`：
+>
+> ```js
+> const User = {
+>   template: `
+>     <div class="user">
+>       <h2>User {{ $route.params.id }}</h2>
+>       <router-view></router-view>
+>     </div>
+>   `
+> }
+> ```
+>
+> 要在嵌套的出口中渲染组件，需要在 `VueRouter` 的参数中使用 `children` 配置：
+>
+> ```js
+> const router = new VueRouter({
+>   routes: [
+>     {
+>       path: '/user/:id',
+>       component: User,
+>       children: [
+>         {
+>           // 当 /user/:id/profile 匹配成功，
+>           // UserProfile 会被渲染在 User 的 <router-view> 中
+>           path: 'profile',
+>           component: UserProfile
+>         },
+>         {
+>           // 当 /user/:id/posts 匹配成功
+>           // UserPosts 会被渲染在 User 的 <router-view> 中
+>           path: 'posts',
+>           component: UserPosts
+>         }
+>       ]
+>     }
+>   ]
+> })
+> ```
+>
+> **要注意，以 `/` 开头的嵌套路径会被当作根路径。 这让你充分的使用嵌套组件而无须设置嵌套的路径。**
+>
+> 你会发现，`children` 配置就是像 `routes` 配置一样的路由配置数组，所以呢，你可以嵌套多层路由。
+>
+> 此时，基于上面的配置，当你访问 `/user/foo` 时，`User` 的出口是不会渲染任何东西，这是因为没有匹配到合适的子路由。如果你想要渲染点什么，可以提供一个 空的 子路由：
+>
+> ```js
+> const router = new VueRouter({
+>   routes: [
+>     {
+>       path: '/user/:id',
+>       component: User,
+>       children: [
+>         // 当 /user/:id 匹配成功，
+>         // UserHome 会被渲染在 User 的 <router-view> 中
+>         { path: '', component: UserHome }
+> 
+>         // ...其他子路由
+>       ]
+>     }
+>   ]
+> })
+> ```
+
+---
+
+*嵌套路由是一个很常见的功能*
+
+比如在home页面中, 我们希望通过/home/news和/home/message访问一些内容.
+一个路径映射一个组件, 访问这两个路径也会分别渲染两个组件.
+
+路径和组件的关系如下:
+
+![image](../images/49.png)
+
+实现嵌套路由有**两个步骤**:
+创建对应的子组件, 并且在路由映射中配置对应的子路由.
+在组件内部使用<router-view>标签.
+
+定义两个组件:
+
+![image](../images/50.png)
+
+![image](../images/51.png)
+
+![image](../images/52.png)
+
+![image](../images/53.png)
+
+**嵌套默认路径**
+
+嵌套路由也可以配置默认的路径, 配置方式如下: 
+
+![image](../images/54.png)
 
 
 
