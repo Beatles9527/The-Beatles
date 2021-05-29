@@ -523,5 +523,57 @@ const Home = () => import('../components/Home.vue')
 
 
 
+## 传参
+
+传递参数主要有两种类型: **params**和**query**
+
+- **params的类型:**
+  配置路由格式: /router/:id
+  传递的方式: 在path后面跟上对应的值
+  传递后形成的路径: /router/123, /router/abc
+
+- **query的类型:**
+  配置路由格式: /router, 也就是普通配置
+  传递的方式: 对象中使用query的key作为传递方式
+  传递后形成的路径: /router?id=123, /router?id=abc
+
+如何使用它们呢? 也有两种方式: <router-link>的方式和JavaScript代码方式
+
+**<router-link>**
+
+![image](../images/55.png)
+
+**JavaScript代码**
+
+![image](../images/56.png)
+
+**获取参数通过$route对象获取的.**
+
+在使用了 vue-router 的应用中，路由对象会被注入每个组件中，赋值为 this.$route ，并且当路由切换时，路由对象会被更新。
+
+通过$route获取传递的信息如下:
+
+![image](../images/57.png)
+
+
+
+## $route和 $router是有区别的
+
+> $router为VueRouter实例，想要导航到不同URL，则使用$router.push方法
+>
+> $route为当前router跳转对象里面可以获取name、path、query、params等
+
+![image](../images/58.png)
+
+
+
+
+
+
+
+
+
+
+
 
 
