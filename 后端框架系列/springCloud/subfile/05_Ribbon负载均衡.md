@@ -9,11 +9,6 @@ Ribbon：负载均衡 (基于客户端)
 
 **Ribbon 能干嘛？**
 
-- Spring Cloud Ribbon 是基于 Netflix Ribbon 实现的一套**客户端负载均衡的工具**。
-- 简单的说，Ribbon 是 Netflix 发布的开源项目，主要功能是提供客户端的软件负载均衡算法，将 Netflix 的中间层服务连接在一起。Ribbon 的客户端组件提供一系列完整的配置项，如：连接超时、重试等。简单的说，就是在配置文件中列出 LoadBalancer (简称 LB：负载均衡) 后面所有的及其，Ribbon 会自动的帮助你基于某种规则 (如简单轮询，随机连接等等) 去连接这些机器。我们也容易使用 Ribbon 实现自定义的负载均衡算法！
-
-Ribbon 能干嘛？
-
 ![image](../image/Mac_2021-06-13_23-09-04.png)
 
 - LB，即负载均衡 (LoadBalancer) ，在微服务或分布式集群中经常用的一种应用。
@@ -93,6 +88,12 @@ public class ConfigBean {//@Configuration -- spring  applicationContext.xml
 //private static final String REST_URL_PREFIX = "http://localhost:8001";
 private static final String REST_URL_PREFIX = "http://SPRINGCLOUD-PROVIDER-DEPT";
 ```
+
+> 在微服务中每一个服务都可能随着业务的发展而横向扩展（集群），前面我们已经搭建一个服务注册中心，同时也向这个服务注册中心注册了服务，接下来我们就可以发现和消费服务了，这其中服务的**发现由 eureka 客户端实现**，而**服务的消费由 Ribbon 实现**，也就是说服务的调用需要 eureka 客户端和 Ribbon，两者配合起来才能实现客户端负载均衡，服务的故障切换等；
+>
+> Ribbon 是一个基于 HTTP 和 TCP 的客户端负载均衡器，当使用 Ribbon 对服务进行访问的时候，它会扩展 Eureka 客户端的服务发现功能，实现从Eureka注册中心中获取服务端列表，并通过 Eureka 客户端来确定服务端是否己经启动。
+>
+> Ribbon 在 Eureka 客户端服务发现的基础上，实现了对服务实例的选择策略， 从而实现对服务的负载均衡消费。
 
 
 
@@ -271,7 +272,38 @@ public class MyRandomRule extends AbstractLoadBalancerRule {
 
 
 
+# 四、Ribbon源码结构
 
+![image](../image/Mac_2021-06-14_14-06-11.png)
+
+`com.netflix.loadbalancer.IRule`接口定义了Ribbon负载均衡的统一接口，所有负载均衡算法都会实现该接口，如果我们需要实现自己的负载均衡算法，只需要实现该接口即可。
+
+
+
+## 4.1负载均衡实现
+
+| 负载均衡实现               | 策略                                                         |
+| -------------------------- | ------------------------------------------------------------ |
+| RandomRule                 | 随机                                                         |
+| RoundRobinRule             | 轮询                                                         |
+| AvailabilityFilteringRule  | 先过滤掉由于多次访问故障的服务，以及并发连接数超过阈值的服务，然后对剩下的服务按照轮询策略进行访问 |
+| WeightedResponseTimeRule   | 根据平均响应时间计算所有服务的权重，响应时间越快服务权重就越大被选中的概率即越高，如果服务刚启动时统计信息不足，则使用 RoundRobinRule 策略，待统计信息足够会切换到该 WeightedResponseTimeRule 策略 |
+| RetryRule                  | 先按照 RoundRobinRule 策略分发，如果分发到的服务不能访问，则在指定时间内进行重试，然后分发其他可用的服务 |
+| BestAvailableRule          | 先过滤掉由于多次访问故障的服务，然后选择一个并发量最小的服务 |
+| ZoneAvoidanceRule （默认） | 综合判断服务节点所在区域的性能和服务节点的可用性，来决定选择哪个服务 |
+
+
+
+## 4.2配置负载均衡实现
+
+默认情况下会采用`ZoneAvoidanceRule `负载均衡算法（Greenwich.SR6 版本），如果我们需要定义其它内置算法，甚至是自定义负载均衡算法，我们只需要将`IRule`实例注册到 Spring 容器中即可：
+
+```java
+@Bean
+public IRule iRule(){
+    return new RoundRobinRule();
+}
+```
 
 
 
